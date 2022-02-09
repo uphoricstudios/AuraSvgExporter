@@ -10,8 +10,9 @@ If you found a bug, please [create an issue](https://help.github.com/articles/cr
 ## License
 Licensed under the MIT license.
 
-This project has dependencies on other open-source projects. These projects are referenced via NuGet packages and might be subject to different licenses.
+This project has dependencies on other open-source projects. 
+These projects are referenced via NuGet packages and might be subject to different licenses.
 
-|Project|Sources|License|
-|--------|---|---------|
-|SVG|[GitHub](https://github.com/svg-net/SVG)|[MS-PL](https://github.com/svg-net/SVG/blob/master/license.txt)|
+|Project|License|
+|-------|-------|
+[SVG](https://github.com/svg-net/SVG)|[MS-PL](https://github.com/svg-net/SVG/blob/master/license.txt)|
