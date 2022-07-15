@@ -1,6 +1,7 @@
 # Project-specific
 AuraSvgOutput/
 test_svgs/
+output_test/
 
 *.swp
 *.*~
