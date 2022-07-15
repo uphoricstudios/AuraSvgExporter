@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-  <Version>1.0.1</Version>
+  <Version>1.1.0</Version>
     <Authors>uPhoric Studios</Authors>
     <Summary>SVG Exporter Tool</Summary>
     <Description>
