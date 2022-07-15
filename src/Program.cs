@@ -7,6 +7,7 @@ const string OutputFolderName = "AuraSvgOutput";
 
 var outputFolderPath = String.Empty;
 var inputFile = new Argument<FileSystemInfo>("input").ExistingOnly();
+var outputFile = new Option<DirectoryInfo>("--output").ExistingOnly();
 var sizes = new Option<int[]>("--sizes");
 var command = new RootCommand();
 
@@ -19,8 +20,13 @@ sizes.Description = "The different sizes to export the SVG to.";
 sizes.IsRequired = true;
 sizes.AllowMultipleArgumentsPerToken = true;
 
+outputFile.AddAlias("-o");
+outputFile.Description = "Output directory.";
+outputFile.IsRequired = false;
+
 command.AddArgument(inputFile);
 command.AddOption(sizes);
+command.Add(outputFile);
 command.Description = @"A tool that exports SVGs into different image formats with different sizes. 
 It currently only exports to png format, more will be added if there is a demand.";
 
@@ -42,12 +48,19 @@ void processFile(FileInfo fileInfo, int[] sizes) {
     svg2Png(fileInfo.FullName, sizes);
 }
 
-void createOutputFolder() {
+void createOutputFolder(DirectoryInfo outputFileInfo) {
+    if (outputFileInfo != null) {
+        outputFolderPath = outputFileInfo.FullName;
+        return;
+    }
+   
    outputFolderPath = Path.Combine(Directory.GetCurrentDirectory(), OutputFolderName);
 
     try {
         if(!Directory.Exists(outputFolderPath)) {
+            Console.WriteLine("Creating output directory...");
             DirectoryInfo dirInfo = Directory.CreateDirectory(outputFolderPath);
+            Console.WriteLine($"{dirInfo.FullName} created.");
         }
     }
 
@@ -61,11 +74,10 @@ void svg2Png(string svgPath, int[] sizes) {
     String outputSubFolder = Path.Combine(outputFolderPath, fileName);
     
     if(!Directory.Exists(outputSubFolder)) {
-            DirectoryInfo dirInfo = Directory.CreateDirectory(outputSubFolder);
+        DirectoryInfo dirInfo = Directory.CreateDirectory(outputSubFolder);
     }
     
     foreach(int size in sizes) {
-        
         string exportedFileName = Path.Combine(outputSubFolder, $"{fileName}-{size}.png");
         
         SvgDocument svgDocument = SvgDocument.Open(svgPath);
@@ -78,9 +90,10 @@ void svg2Png(string svgPath, int[] sizes) {
 
 #endregion
 
-command.SetHandler<FileSystemInfo, int[]>(
-    (inputFile, sizes) => {
-        createOutputFolder();
+command.SetHandler<FileSystemInfo, int[], DirectoryInfo>(
+    (inputFile, sizes, outputFile) => {
+        createOutputFolder(outputFile);
+        Console.WriteLine($"Output Directory: {outputFolderPath}");
 
         foreach(int size in sizes) {
             if(size < 1) {
@@ -97,7 +110,7 @@ command.SetHandler<FileSystemInfo, int[]>(
             processDirectory((inputFile as DirectoryInfo)!, sizes);
         }
 
-    }, inputFile, sizes
+    }, inputFile, sizes, outputFile
 );
 
 command.Invoke(args);
